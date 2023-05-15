@@ -15,11 +15,15 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.ViewPager
 import com.example.editeditscanner.App
 import com.example.editeditscanner.R
 import com.example.editeditscanner.adapter.ViewFrameAdapter
+import com.example.editeditscanner.data.Assets
 import com.example.editeditscanner.data.Frame
 import com.example.editeditscanner.databinding.ActivityViewPageBinding
 import com.example.editeditscanner.viewmodels.ViewPageActivityViewModel
@@ -29,6 +33,8 @@ import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
+import com.googlecode.tesseract.android.TessBaseAPI
+import java.io.File
 
 class ViewPageActivity : BaseActivity(), OnItemSelectedListener, ViewPager.OnPageChangeListener {
 
@@ -82,6 +88,14 @@ class ViewPageActivity : BaseActivity(), OnItemSelectedListener, ViewPager.OnPag
                 it.viewPager.currentItem = viewModel.currentIndex
             }
         }
+
+        Assets.extractAssets(this)
+
+        if(!viewModel.isInitialized()) {
+            val dataPath = Assets.getTessDataPath(this)
+            val language = Assets.getEngLanguage()
+            viewModel.initTesseract(dataPath, language, TessBaseAPI.OEM_LSTM_ONLY)
+        }
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -128,22 +142,38 @@ class ViewPageActivity : BaseActivity(), OnItemSelectedListener, ViewPager.OnPag
                 val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
                 val bitmap =
                     BitmapFactory.decodeFile(viewFrameAdapter.get(getCurrentIndex()).editedUri)
-                recognizer.process(InputImage.fromBitmap(bitmap, 0))
-                    .addOnSuccessListener { text: Text ->
-                        showNoteDialog(
-                            "Detected Text",
-                            "",
-                            text.text,
-                            viewFrameAdapter.get(getCurrentIndex())
-                        )
+                val file: File? = viewFrameAdapter.get(getCurrentIndex()).editedUri?.let {
+                    File(it)
+                }
+                if(file != null) {
+                    viewModel.recognizeImage(file)
+
+//                    viewModel.getProcessing().observe(this) { processing ->
+//
+//                    }
+                    viewModel.getResult().observe(this) { result ->
+                        showNoteDialog("Detected text",
+                        "",
+                        result.toString(),
+                        viewFrameAdapter.get(getCurrentIndex()))
                     }
-                    .addOnFailureListener {
-                        Toast.makeText(
-                            this,
-                            "ERROR: Could not detect text",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+                }
+//                recognizer.process(InputImage.fromBitmap(bitmap, 0))
+//                    .addOnSuccessListener { text: Text ->
+//                        showNoteDialog(
+//                            "Detected Text",
+//                            "",
+//                            text.text,
+//                            viewFrameAdapter.get(getCurrentIndex())
+//                        )
+//                    }
+//                    .addOnFailureListener {
+//                        Toast.makeText(
+//                            this,
+//                            "ERROR: Could not detect text",
+//                            Toast.LENGTH_SHORT
+//                        ).show()
+//                    }
             }
         }
         return false

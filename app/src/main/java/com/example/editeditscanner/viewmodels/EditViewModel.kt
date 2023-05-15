@@ -25,7 +25,7 @@ class EditViewModelFactory(
     private val application: App,
     private val frameDao: FrameDao
 ) : ViewModelProvider.Factory {
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
         @Suppress("UNCHECKED_CAST")
         return EditViewModel(application, frameDao) as T
     }

@@ -80,11 +80,21 @@ class BoundingRect {
     }
 
     fun width(): Double {
-        return abs(java.lang.Double.max(topRight.x, bottomRight.x) - java.lang.Double.min(topLeft.x, bottomLeft.x))
+        return abs(
+            java.lang.Double.max(topRight.x, bottomRight.x) - java.lang.Double.min(
+                topLeft.x,
+                bottomLeft.x
+            )
+        )
     }
 
     fun height(): Double {
-        return abs(java.lang.Double.max(bottomLeft.y, bottomRight.y) - java.lang.Double.min(topLeft.y, topRight.x))
+        return abs(
+            java.lang.Double.max(
+                bottomLeft.y,
+                bottomRight.y
+            ) - java.lang.Double.min(topLeft.y, topRight.x)
+        )
     }
 
     override fun toString(): String {

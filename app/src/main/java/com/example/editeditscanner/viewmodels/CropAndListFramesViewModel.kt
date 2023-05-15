@@ -9,6 +9,8 @@ import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.lifecycle.*
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
+import androidx.lifecycle.viewmodel.CreationExtras
 import com.example.editeditscanner.App
 import com.example.editeditscanner.dao.DocumentDao
 import com.example.editeditscanner.dao.FrameDao
@@ -133,7 +135,7 @@ class CropAndListFramesViewModelFactory(
     private val documentDao: DocumentDao,
     private val frameDao: FrameDao
 ) : ViewModelProvider.Factory {
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
         @Suppress("UNCHECKED_CAST")
         return CropAndListFramesViewModel(application, documentDao, frameDao) as T
     }

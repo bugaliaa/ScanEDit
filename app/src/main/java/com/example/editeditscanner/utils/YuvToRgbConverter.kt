@@ -55,18 +55,18 @@ class YuvToRgbConverter(context: Context) {
         val imagePlanes = image.planes
 
         imagePlanes.forEachIndexed { planeIndex, plane ->
-            // How many values are read in input for each output value written
-            // Only the Y plane has a value for every pixel, U and V have half the resolution i.e.
-            //
-            // Y Plane            U Plane    V Plane
-            // ===============    =======    =======
-            // Y Y Y Y Y Y Y Y    U U U U    V V V V
-            // Y Y Y Y Y Y Y Y    U U U U    V V V V
-            // Y Y Y Y Y Y Y Y    U U U U    V V V V
-            // Y Y Y Y Y Y Y Y    U U U U    V V V V
-            // Y Y Y Y Y Y Y Y
-            // Y Y Y Y Y Y Y Y
-            // Y Y Y Y Y Y Y Y
+//             How many values are read in input for each output value written
+//             Only the Y plane has a value for every pixel, U and V have half the resolution i.e.
+//
+//             Y Plane            U Plane    V Plane
+//             ===============    =======    =======
+//             Y Y Y Y Y Y Y Y    U U U U    V V V V
+//             Y Y Y Y Y Y Y Y    U U U U    V V V V
+//             Y Y Y Y Y Y Y Y    U U U U    V V V V
+//             Y Y Y Y Y Y Y Y    U U U U    V V V V
+//             Y Y Y Y Y Y Y Y
+//             Y Y Y Y Y Y Y Y
+//             Y Y Y Y Y Y Y Y
             val outputStride: Int
 
             // The index in the output buffer the next value will be written at
@@ -81,6 +81,8 @@ class YuvToRgbConverter(context: Context) {
             // Y Y Y Y Y Y Y Y
             // Y Y Y Y Y Y Y Y
             // Y Y Y Y Y Y Y Y
+
+
             var outputOffset: Int
 
             when (planeIndex) {
